@@ -1,13 +1,13 @@
-package com.github.airatgaliev.demosoapservice.payload;
+package com.github.airatgaliev.demosoapservice.entities;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlType(name = "request")
+@XmlRootElement(name = "Envelope")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EnvelopeRequest {
+public class Envelope {
 
   @XmlElement(name = "FirstName", required = true)
   private String firstName;
@@ -19,6 +19,18 @@ public class EnvelopeRequest {
   private Double income;
   @XmlElement(name = "Expenses", required = true)
   private Double expenses;
+
+  public Envelope() {
+  }
+
+  public Envelope(String firstName, String secondName, String lastName, Double income,
+      Double expenses) {
+    this.firstName = firstName;
+    this.secondName = secondName;
+    this.lastName = lastName;
+    this.income = income;
+    this.expenses = expenses;
+  }
 
   public String getFirstName() {
     return firstName;
