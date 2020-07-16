@@ -1,6 +1,6 @@
 package com.github.airatgaliev.demosoapservice.config;
 
-import com.github.airatgaliev.demosoapservice.services.EnvelopeServiceImpl;
+import com.github.airatgaliev.demosoapservice.services.CustomerServiceImpl;
 import javax.xml.ws.Endpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
@@ -19,9 +19,9 @@ public class EndpointsConfig {
   }
 
   @Bean
-  public Endpoint getEnvelopEndpoint() {
-    Endpoint endpoint = new EndpointImpl(bus, new EnvelopeServiceImpl());
-    endpoint.publish("/Envelope");
+  public Endpoint getCustomerEndpoint() {
+    Endpoint endpoint = new EndpointImpl(bus, new CustomerServiceImpl());
+    endpoint.publish("/Customer");
     return endpoint;
   }
 }

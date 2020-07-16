@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EnvelopeResponse {
+public class CustomerResponse {
 
   @XmlElement(name = "RESPONSE")
   private String response;

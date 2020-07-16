@@ -5,9 +5,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "Envelope")
+@XmlRootElement(name = "Customer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Envelope {
+public class Customer {
 
   @XmlElement(name = "FirstName", required = true)
   private String firstName;
@@ -20,10 +20,10 @@ public class Envelope {
   @XmlElement(name = "Expenses", required = true)
   private Double expenses;
 
-  public Envelope() {
+  public Customer() {
   }
 
-  public Envelope(String firstName, String secondName, String lastName, Double income,
+  public Customer(String firstName, String secondName, String lastName, Double income,
       Double expenses) {
     this.firstName = firstName;
     this.secondName = secondName;
