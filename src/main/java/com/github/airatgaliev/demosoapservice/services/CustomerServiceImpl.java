@@ -1,32 +1,34 @@
 package com.github.airatgaliev.demosoapservice.services;
 
 import com.github.airatgaliev.demosoapservice.entities.Customer;
+import com.github.airatgaliev.demosoapservice.exceptions.InvalidStringException;
+import com.github.airatgaliev.demosoapservice.payload.CustomerRequest;
 import com.github.airatgaliev.demosoapservice.payload.CustomerResponse;
+import java.text.DecimalFormat;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CustomerServiceImpl implements ICustomerService {
 
-  public static final String RESPONSE_STRING_OK = "Чистый доход по клиенту %s %s %s составляет %s рублей!";
-  public static final String RESPONSE_STRING_ERROR = "В запросе имеется ошибка: ";
-  public static final String RESPONSE_STATUS_OK = "OK";
-  public static final String RESPONSE_STATUS_ERROR = "ERROR";
+  private static final String RESPONSE_STRING_OK = "Чистый доход по клиенту %s %s %s составляет %s рублей!";
+  private static final String RESPONSE_STRING_ERROR = "В запросе имеется ошибка: ";
+  private static final String RESPONSE_STATUS_OK = "OK";
+  private static final String RESPONSE_STATUS_ERROR = "ERROR";
 
   @Override
-  public CustomerResponse getEarnings(Customer customer) {
+  public CustomerResponse getEarnings(CustomerRequest customerRequest) {
     CustomerResponse customerResponse = new CustomerResponse();
     String response = "";
     try {
-      Customer newCustomer = getValidatedCustomer(customer);
-      assert newCustomer != null;
+      Customer newCustomer = getValidatedCustomer(customerRequest);
       response = String
-          .format(RESPONSE_STRING_OK, newCustomer.getLastName(), newCustomer.getFirstName(),
-              newCustomer.getSecondName(),
+          .format(RESPONSE_STRING_OK, newCustomer.getLastName().toUpperCase(),
+              newCustomer.getFirstName().toUpperCase(), newCustomer.getSecondName().toUpperCase(),
               earningsCalculate(newCustomer.getIncome(), newCustomer.getExpenses()).toString());
       customerResponse.setResponse(response);
       customerResponse.setResponseStatus(RESPONSE_STATUS_OK);
-    } catch (NullPointerException e) {
-      response = RESPONSE_STRING_ERROR + "не все поля заполенены";
+    } catch (InvalidStringException | NullPointerException e) {
+      response = RESPONSE_STRING_ERROR + e.getMessage();
       customerResponse.setResponse(response);
       customerResponse.setResponseStatus(RESPONSE_STATUS_ERROR);
     }
@@ -34,19 +36,24 @@ public class CustomerServiceImpl implements ICustomerService {
   }
 
   private Double earningsCalculate(Double income, Double expenses) {
-    return income - expenses;
+    return Double.parseDouble(new DecimalFormat(".##").format(income - expenses));
   }
 
-  private Customer getValidatedCustomer(Customer customer) {
-    String firstName = customer.getFirstName().toUpperCase();
-    String secondName = customer.getSecondName().toUpperCase();
-    String lastName = customer.getLastName().toUpperCase();
-    Double income = customer.getIncome();
-    Double expenses = customer.getExpenses();
-    if (!firstName.equals("") && !secondName.equals("") && !lastName.equals("") && income != null
-        && expenses != null) {
-      return new Customer(firstName, secondName, lastName, income, expenses);
-    }
-    return null;
+  private Customer getValidatedCustomer(CustomerRequest customerRequest)
+      throws InvalidStringException {
+    String firstNameString = customerRequest.getFirstName();
+    String secondNameString = customerRequest.getSecondName();
+    String lastNameString = customerRequest.getLastName();
+    String incomeString = customerRequest.getIncome();
+    String expensesString = customerRequest.getExpenses();
+    Double income = Double.parseDouble(incomeString);
+    Double expenses = Double.parseDouble(expensesString);
+    ValidationService validationService = new ValidationService();
+    validationService.validateStringValue(firstNameString);
+    validationService.validateStringValue(secondNameString);
+    validationService.validateStringValue(lastNameString);
+    validationService.validateParseDoubleValue(incomeString);
+    validationService.validateParseDoubleValue(expensesString);
+    return new Customer(firstNameString, secondNameString, lastNameString, income, expenses);
   }
 }
